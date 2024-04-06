@@ -102,4 +102,9 @@ public class SharedQSyncManager {
                 try await socket.send(.data(jsonData))
         }
     }
+    public func leaveGroup() async {
+        if let socket = socket {
+            socket.cancel(with: .normalClosure, reason: nil)
+        }
+    }
 }
