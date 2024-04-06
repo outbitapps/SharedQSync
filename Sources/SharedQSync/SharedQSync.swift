@@ -4,9 +4,9 @@
 import Foundation
 
 public class SharedQSyncManager {
-    var delegate: SharedQSyncDelegate?
-    var serverURL: URL
-    var websocketURL: URL
+    public var delegate: SharedQSyncDelegate?
+    public var serverURL: URL
+    public var websocketURL: URL
     var socket: URLSessionWebSocketTask?
     public init(serverURL: URL = URL(string: "http://sq.paytondev.cloud:8080")!, websocketURL: URL = URL(string: "ws://sq.paytondev.cloud:8080")!) {
         self.serverURL = serverURL
