@@ -6,6 +6,9 @@
 //
 
 import Foundation
+import SharedQProtocol
+
+
 
 public protocol SharedQSyncDelegate {
     /// Called when SharedQSyncManager connects to the group session

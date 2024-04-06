@@ -1,7 +1,10 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+
+#if !SKIP
 import Foundation
+import SharedQProtocol
 
 public class SharedQSyncManager {
     public var delegate: SharedQSyncDelegate?
@@ -115,3 +118,4 @@ public class SharedQSyncManager {
         try await socket?.send(.data(try! JSONEncoder().encode(WSMessage(type: .playbackStarted, data: try JSONEncoder().encode(WSPlaybackStartedMessage(startedAt: Date())), sentAt: Date()))))
     }
 }
+#endif
