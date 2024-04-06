@@ -134,9 +134,7 @@ public enum WSMessageType: Codable {
     /// (sent by client) Client is trying to add a song to the queue
     case addToQueue
 }
-public struct AddGroupRequest: Codable {
-    public var myUID: String
-}
+
 
 public struct WSPlaybackStartedMessage: Codable {
     public var startedAt: Date

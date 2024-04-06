@@ -22,6 +22,9 @@ public class SharedQSyncManager {
         let session = URLSession(configuration: .ephemeral)
         self.socket = session.webSocketTask(with: socketURL)
         socket!.resume()
+        if let delegate = self.delegate {
+            delegate.onGroupConnect()
+        }
         socket!.receive { res in
             switch res {
             case .success(let res2):
