@@ -24,4 +24,6 @@ public protocol SharedQSyncDelegate {
     func onTimestampUpdate(_ timestamp: TimeInterval, _ message: WSMessage)
     /// Called when a client seeks to a specific part of a song. RECOMMENDED: Seek to the provided timestamp.
     func onSeekTo(_ timestamp: TimeInterval, _ message: WSMessage)
+    /// Called when the client is disconnected from the group
+    func onDisconnect()
 }

@@ -105,9 +105,13 @@ public class SharedQSyncManager {
                 try await socket.send(.data(jsonData))
         }
     }
-    public func leaveGroup() async {
+    public func disconnect() async {
         if let socket = socket {
             socket.cancel(with: .normalClosure, reason: nil)
         }
+    }
+    
+    public func playbackStarted() async throws {
+        try await socket?.send(.data(try! JSONEncoder().encode(WSMessage(type: .playbackStarted, data: try JSONEncoder().encode(WSPlaybackStartedMessage(startedAt: Date())), sentAt: Date()))))
     }
 }
