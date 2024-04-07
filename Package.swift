@@ -23,7 +23,8 @@ let package = Package(
         .package(url: "https://source.skip.tools/skip.git", from: "0.8.28"),
         .package(url: "https://source.skip.tools/skip-foundation.git", from: "0.0.0"),
         .package(url: "https://source.skip.tools/skip-firebase.git", from: "0.0.0"),
-        .package(url: "git@github.com:paytontech/sharedqprotocol.git", branch: "main")
+        .package(url: "git@github.com:paytontech/sharedqprotocol.git", branch: "main"),
+        .package(url: "https://github.com/apple/swift-docc", branch: "main")
     ],
     targets: [
         .target(name: "SharedQSync", dependencies: (zero ? [] : [.product(name: "SkipFoundation", package: "skip-foundation"), .product(name: "SharedQProtocol", package: "sharedqprotocol")]), resources: [.process("Resources")], plugins: skipstone),
