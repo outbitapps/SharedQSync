@@ -12,7 +12,7 @@ import SharedQProtocol
 
 public protocol SharedQSyncDelegate {
     /// Called when SharedQSyncManager connects to the group session
-    func onGroupConnect()
+    func onGroupConnect(_ group: SQGroup)
     /// Called when the server sends an updated SQGroup to the client. This can happen for a variety of reasons. Most commonly, it happens when a song is added to the queue, when someone joins the group, or when an action that changes the group's "currentlyPlaying" is used. RECOMMENDED: Replace the current SQGroup with the new one
     func onGroupUpdate(_ group: SQGroup, _ message: WSMessage)
     /// Called when a client has skipped to the next song in the queue. RECOMMENDED: Start playing the group's "currentlyPlaying" song, as `onGroupUpdate` is called ~2 seconds prior to this, and has the next song in the queue loaded.

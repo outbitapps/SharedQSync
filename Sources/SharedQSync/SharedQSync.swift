@@ -26,7 +26,7 @@ public class SharedQSyncManager {
         self.socket = session.webSocketTask(with: socketURL)
         socket!.resume()
         if let delegate = self.delegate {
-            delegate.onGroupConnect()
+            delegate.onGroupConnect(group)
         }
         socket!.receive { res in
             switch res {
