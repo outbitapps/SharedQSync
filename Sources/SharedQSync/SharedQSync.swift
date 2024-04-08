@@ -6,7 +6,7 @@
 import Foundation
 import SharedQProtocol
 
-public class SharedQSyncManager {
+public class SharedQSyncManager : NSObject {
     public var delegate: SharedQSyncDelegate?
     public var serverURL: URL
     public var websocketURL: URL
@@ -24,6 +24,7 @@ public class SharedQSyncManager {
         let socketURL = websocketURL.appending(path: "/group/\(user.id)/\(group.id)")
         let session = URLSession(configuration: .ephemeral)
         self.socket = session.webSocketTask(with: socketURL)
+        socket?.delegate = self
         socket!.resume()
         
         if let delegate = self.delegate {
@@ -118,6 +119,18 @@ public class SharedQSyncManager {
     
     public func playbackStarted() async throws {
         try await socket?.send(.data(try! JSONEncoder().encode(WSMessage(type: .playbackStarted, data: try JSONEncoder().encode(WSPlaybackStartedMessage(startedAt: Date())), sentAt: Date()))))
+    }
+}
+
+extension SharedQSyncManager: URLSessionWebSocketDelegate {
+    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        print("closed: \(closeCode) \(String(data: reason ?? Data(), encoding: .utf8))")
+        if let delegate = self.delegate {
+            delegate.onDisconnect()
+        }
+    }
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
+        print("ERROR: \(error)")
     }
 }
 #endif
