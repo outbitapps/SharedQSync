@@ -25,6 +25,7 @@ public class SharedQSyncManager {
         let session = URLSession(configuration: .ephemeral)
         self.socket = session.webSocketTask(with: socketURL)
         socket!.resume()
+        
         if let delegate = self.delegate {
             delegate.onGroupConnect(group)
         }
@@ -34,6 +35,7 @@ public class SharedQSyncManager {
                 switch res2 {
                 case .data(let data):
                     let wsMessage = try! JSONDecoder().decode(WSMessage.self, from: data)
+                    print(wsMessage.type)
                     switch wsMessage.type {
                     case .groupUpdate:
                         let groupJSON = try! JSONDecoder().decode(SQGroup.self, from: wsMessage.data)
