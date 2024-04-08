@@ -85,7 +85,9 @@ public class SharedQSyncManager : NSObject {
                 print("[SharedQSyncManager] websocket data failed: \(failure) (if this is only happening occasionally, you can probably ignore it)")
                 
             }
-            self.listenForMessage()
+            if self.socket!.state == .running {
+                self.listenForMessage()
+            }
         }
     }
     /// Sends a `pauseSong` message to the server
