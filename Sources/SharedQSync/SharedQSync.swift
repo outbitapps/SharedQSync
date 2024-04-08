@@ -26,10 +26,14 @@ public class SharedQSyncManager : NSObject {
         self.socket = session.webSocketTask(with: socketURL)
         socket?.delegate = self
         socket!.resume()
-        
+        listenForMessage()
         if let delegate = self.delegate {
             delegate.onGroupConnect(group)
         }
+        
+    }
+    
+    private func listenForMessage() {
         socket!.receive { res in
             switch res {
             case .success(let res2):
@@ -79,7 +83,9 @@ public class SharedQSyncManager : NSObject {
                 }
             case .failure(let failure):
                 print("[SharedQSyncManager] websocket data failed: \(failure) (if this is only happening occasionally, you can probably ignore it)")
+                
             }
+            listenForMessage()
         }
     }
     /// Sends a `pauseSong` message to the server
