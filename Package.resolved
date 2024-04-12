@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
-        "revision" : "888f0b6026e2441a69e3ee2ad5293c7a92031e62",
-        "version" : "10.23.1"
+        "revision" : "42eae77a0af79e9c3f41df04a23c76f05cfdda77",
+        "version" : "10.24.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "c7a5917ebe48d69f421aadf154ef3969c8b7f12d",
-        "version" : "10.23.1"
+        "revision" : "51ba746a9d51a4bd0774b68499b0c73ef6e8570d",
+        "version" : "10.24.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/leveldb.git",
       "state" : {
-        "revision" : "43aaef65e0c665daadf848761d560e446d350d3d",
-        "version" : "1.22.4"
+        "revision" : "a0bc79961d7be727d258d33d5a6b2f1023270ba1",
+        "version" : "1.22.5"
       }
     },
     {
@@ -114,7 +114,7 @@
       "location" : "git@github.com:paytontech/sharedqprotocol.git",
       "state" : {
         "branch" : "main",
-        "revision" : "7251b55ccb9724151980c99002df34a2570ac48d"
+        "revision" : "c2042e3fee00bb4996628a4564f7f9e287ebc06b"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://source.skip.tools/skip.git",
       "state" : {
-        "revision" : "1c17779236b1d365082d9b4d4672b0e8a799dfaa",
-        "version" : "0.8.29"
+        "revision" : "359534299e1e952133e962f25e18319028211de0",
+        "version" : "0.8.30"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://source.skip.tools/skip-foundation.git",
       "state" : {
-        "revision" : "6e1e70d217d344f18dc6173ff58ad8ce928f9343",
-        "version" : "0.5.15"
+        "revision" : "42dd21d1a2ad5b588c4f8679f0e27ecf5b86bdfb",
+        "version" : "0.6.0"
       }
     },
     {
@@ -222,7 +222,7 @@
       "location" : "https://github.com/apple/swift-docc",
       "state" : {
         "branch" : "main",
-        "revision" : "c44f0242c03bc7f6fac9e54b41bb0ca7d90ec916"
+        "revision" : "29332fe809dd7a28e7c1d718cb9037b2831f2fbc"
       }
     },
     {

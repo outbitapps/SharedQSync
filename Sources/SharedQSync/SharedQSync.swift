@@ -1,8 +1,6 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-
-#if !SKIP
 import Foundation
 import SharedQProtocol
 
@@ -35,16 +33,18 @@ public class SharedQSyncManager : NSObject {
     
     private func listenForMessage() {
         socket!.receive { res in
+            
             switch res {
-            case .success(let res2):
-                switch res2 {
+            case Result<URLSessionWebSocketTask.Message, any Error>.success(let res2):
+                
+                switch res2 as! URLSessionWebSocketTask.Message {
                 case .data(let data):
                     let wsMessage = try! JSONDecoder().decode(WSMessage.self, from: data)
                     print(wsMessage.type)
                     switch wsMessage.type {
-                    case .groupUpdate:
+                    case WSMessageType.groupUpdate:
                         let groupJSON = try! JSONDecoder().decode(SQGroup.self, from: wsMessage.data)
-                        if groupJSON.playbackState?.state == .pause {
+                        if groupJSON.playbackState?.state == PlayPauseState.pause {
                             if let delegate = self.delegate {
                                 delegate.onPause(wsMessage)
                             }
@@ -52,25 +52,25 @@ public class SharedQSyncManager : NSObject {
                             if let delegate = self.delegate {
                                 delegate.onGroupUpdate(groupJSON, wsMessage)
                             }
-                    case .timestampUpdate:
+                    case WSMessageType.timestampUpdate:
                         
                             let timestampUpdateInfo = try! JSONDecoder().decode(WSTimestampUpdate.self, from: wsMessage.data)
                         if let delegate = self.delegate {
                             delegate.onTimestampUpdate(timestampUpdateInfo.timestamp, wsMessage)
                         }
-                    case .nextSong:
+                    case WSMessageType.nextSong:
                         if let delegate = self.delegate {
                             delegate.onNextSong(wsMessage)
                         }
-                    case .goBack:
+                    case WSMessageType.goBack:
                         if let delegate = self.delegate {
                             delegate.onPrevSong(wsMessage)
                         }
-                    case .play:
+                    case WSMessageType.play:
                         if let delegate = self.delegate {
                             delegate.onPlay(wsMessage)
                         }
-                    case .pause:
+                    case WSMessageType.pause:
                         if let delegate = self.delegate {
                             delegate.onPause(wsMessage)
                         }
@@ -81,7 +81,7 @@ public class SharedQSyncManager : NSObject {
                 case .string(let string):
                     break;
                 }
-            case .failure(let failure):
+            case Result<URLSessionWebSocketTask.Message, any Error>.failure(let failure):
                 print("[SharedQSyncManager] websocket data failed: \(failure) (if this is only happening occasionally, you can probably ignore it)")
                 
             }
@@ -141,4 +141,3 @@ extension SharedQSyncManager: URLSessionWebSocketDelegate {
         print("ERROR: \(error)")
     }
 }
-#endif
