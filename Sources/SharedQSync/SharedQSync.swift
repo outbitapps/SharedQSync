@@ -19,7 +19,7 @@ public class SharedQSyncManager : NSObject {
             print("[SharedQSync] [WARNING] No delegate has been provided for this instance of SharedQSyncManager. You will not recieve any messages from the server.")
         }
 //        let socketURL = URL(string: "\(baseWSURL)/group/\(self.currentUser!.id)/\(group.id)")!
-        let socketURL = websocketURL.appending(path: "/group/\(group.id)/\(token)")
+        let socketURL = websocketURL.appending(path: "/group/\(group.id)/\(token.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)")
         let session = URLSession(configuration: .ephemeral)
         
         self.socket = session.webSocketTask(with: socketURL)
