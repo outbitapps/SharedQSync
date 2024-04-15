@@ -14,14 +14,16 @@ public class SharedQSyncManager : NSObject {
         self.websocketURL = websocketURL
     }
     /// Creates a WebSocket session with the server (uses websocketURL from `init`)
-    public func connectToGroup(group: SQGroup, user: SQUser) {
+    public func connectToGroup(group: SQGroup, token: String) {
         if delegate == nil {
             print("[SharedQSync] [WARNING] No delegate has been provided for this instance of SharedQSyncManager. You will not recieve any messages from the server.")
         }
 //        let socketURL = URL(string: "\(baseWSURL)/group/\(self.currentUser!.id)/\(group.id)")!
-        let socketURL = websocketURL.appending(path: "/group/\(user.id)/\(group.id)")
+        let socketURL = websocketURL.appending(path: "/group/\(group.id)/\(token)")
         let session = URLSession(configuration: .ephemeral)
+        
         self.socket = session.webSocketTask(with: socketURL)
+        
         socket?.delegate = self
         socket!.resume()
         listenForMessage()
