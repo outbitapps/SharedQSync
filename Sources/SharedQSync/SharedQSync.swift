@@ -35,7 +35,7 @@ public class SharedQSyncManager : NSObject {
     }
     
     private func listenForMessage() {
-        socket!.receive { res in
+        (socket as URLSessionWebSocketTask?)!.receive { res in
             
             switch res {
             case Result<URLSessionWebSocketTask.Message, any Error>.success(let res2):
