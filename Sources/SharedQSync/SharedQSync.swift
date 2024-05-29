@@ -36,62 +36,57 @@ public class SharedQSyncManager : NSObject {
     
     private func listenForMessage() {
         Task {
-            (socket as URLSessionWebSocketTask?)!.receive { (res: Result<URLSessionWebSocketTask.Message, any Error>) in
-                
-                switch res {
-                case Result<URLSessionWebSocketTask.Message, any Error>.success(let res2):
-                    
-                    switch res2 as! URLSessionWebSocketTask.Message {
-                    case .data(let data):
-                        let wsMessage = try! JSONDecoder().decode(WSMessage.self, from: data)
-                        print(wsMessage.type)
-                        switch wsMessage.type {
-                        case WSMessageType.groupUpdate:
-                            let groupJSON = try! JSONDecoder().decode(SQGroup.self, from: wsMessage.data)
-                            if groupJSON.playbackState?.state == PlayPauseState.pause {
-                                if let delegate = self.delegate {
-                                    delegate.onPause(wsMessage)
-                                }
-                            }
-                                if let delegate = self.delegate {
-                                    delegate.onGroupUpdate(groupJSON, wsMessage)
-                                }
-                        case WSMessageType.timestampUpdate:
-                            
-                                let timestampUpdateInfo = try! JSONDecoder().decode(WSTimestampUpdate.self, from: wsMessage.data)
-                            if let delegate = self.delegate {
-                                delegate.onTimestampUpdate(timestampUpdateInfo.timestamp, wsMessage)
-                            }
-                        case WSMessageType.nextSong:
-                            if let delegate = self.delegate {
-                                delegate.onNextSong(wsMessage)
-                            }
-                        case WSMessageType.goBack:
-                            if let delegate = self.delegate {
-                                delegate.onPrevSong(wsMessage)
-                            }
-                        case WSMessageType.play:
-                            if let delegate = self.delegate {
-                                delegate.onPlay(wsMessage)
-                            }
-                        case WSMessageType.pause:
+            do {
+                let res = try await (socket as URLSessionWebSocketTask?)!.receive()
+                switch res as! URLSessionWebSocketTask.Message {
+                case .data(let data):
+                    let wsMessage = try! JSONDecoder().decode(WSMessage.self, from: data)
+                    print(wsMessage.type)
+                    switch wsMessage.type {
+                    case WSMessageType.groupUpdate:
+                        let groupJSON = try! JSONDecoder().decode(SQGroup.self, from: wsMessage.data)
+                        if groupJSON.playbackState?.state == PlayPauseState.pause {
                             if let delegate = self.delegate {
                                 delegate.onPause(wsMessage)
                             }
-                        default:
-                            break;
                         }
-                        break;
-                    case .string(let string):
+                            if let delegate = self.delegate {
+                                delegate.onGroupUpdate(groupJSON, wsMessage)
+                            }
+                    case WSMessageType.timestampUpdate:
+                        
+                            let timestampUpdateInfo = try! JSONDecoder().decode(WSTimestampUpdate.self, from: wsMessage.data)
+                        if let delegate = self.delegate {
+                            delegate.onTimestampUpdate(timestampUpdateInfo.timestamp, wsMessage)
+                        }
+                    case WSMessageType.nextSong:
+                        if let delegate = self.delegate {
+                            delegate.onNextSong(wsMessage)
+                        }
+                    case WSMessageType.goBack:
+                        if let delegate = self.delegate {
+                            delegate.onPrevSong(wsMessage)
+                        }
+                    case WSMessageType.play:
+                        if let delegate = self.delegate {
+                            delegate.onPlay(wsMessage)
+                        }
+                    case WSMessageType.pause:
+                        if let delegate = self.delegate {
+                            delegate.onPause(wsMessage)
+                        }
+                    default:
                         break;
                     }
-                case Result<URLSessionWebSocketTask.Message, any Error>.failure(let failure):
-                    print("[SharedQSyncManager] websocket data failed: \(failure) (if this is only happening occasionally, you can probably ignore it)")
-                    
+                    break;
+                case .string(let string):
+                    break;
                 }
                 if self.socket!.state == .running {
                     self.listenForMessage()
                 }
+            } catch {
+                print("Error getting data from websocket: \(error)")
             }
         }
     }
