@@ -3,6 +3,9 @@
 
 import Foundation
 import SharedQProtocol
+import OSLog
+
+let logger: Logger = Logger(subsystem: "com.paytondeveloper.sharedqandroid", category: "SharedQSync")
 
 public class SharedQSyncManager : NSObject {
     public var delegate: SharedQSyncDelegate?
@@ -16,7 +19,7 @@ public class SharedQSyncManager : NSObject {
     /// Creates a WebSocket session with the server (uses websocketURL from `init`)
     public func connectToGroup(group: SQGroup, token: String) {
         if delegate == nil {
-            print("[SharedQSync] [WARNING] No delegate has been provided for this instance of SharedQSyncManager. You will not recieve any messages from the server.")
+            logger.warning("[SharedQSync] [WARNING] No delegate has been provided for this instance of SharedQSyncManager. You will not recieve any messages from the server.")
         }
         let socketURL = URL(string: "\(websocketURL.absoluteString)/groups/group/\(group.id)/\(token)")!
 //        let socketURL = websocketURL.appending(path: "/groups/group/\(group.id)/\(token)")
@@ -41,7 +44,7 @@ public class SharedQSyncManager : NSObject {
                 switch res as! URLSessionWebSocketTask.Message {
                 case .data(let data):
                     let wsMessage = try! JSONDecoder().decode(WSMessage.self, from: data)
-                    print(wsMessage.type)
+                    logger.log("new wsmessage")
                     switch wsMessage.type {
                     case WSMessageType.groupUpdate:
                         let groupJSON = try! JSONDecoder().decode(SQGroup.self, from: wsMessage.data)
@@ -86,7 +89,7 @@ public class SharedQSyncManager : NSObject {
                     self.listenForMessage()
                 }
             } catch {
-                print("Error getting data from websocket: \(error)")
+                logger.error("Error getting data from websocket: \(error)")
             }
         }
     }
@@ -132,12 +135,12 @@ public class SharedQSyncManager : NSObject {
 
 extension SharedQSyncManager: URLSessionWebSocketDelegate {
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        print("closed: \(closeCode) \(String(data: reason ?? Data(), encoding: .utf8))")
+        logger.debug("closed: \(closeCode.rawValue)")
         if let delegate = self.delegate {
             delegate.onDisconnect()
         }
     }
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
-        print("ERROR: \(error)")
+        logger.error("ERROR: \(error)")
     }
 }
