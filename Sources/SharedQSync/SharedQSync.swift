@@ -47,7 +47,7 @@ public class SharedQSyncManager : NSObject {
                     logger.log("new wsmessage")
                     switch wsMessage.type {
                     case WSMessageType.groupUpdate:
-                        let groupJSON = try! JSONDecoder().decode(SQGroup.self, from: wsMessage.data)
+                        let groupJSON = try! JSONDecoder().decode(SQGroup.self, from: wsMessage.data.data(using: .utf8) ?? Data())
                         if groupJSON.playbackState?.state == PlayPauseState.pause {
                             if let delegate = self.delegate {
                                 delegate.onPause(wsMessage)
@@ -58,7 +58,7 @@ public class SharedQSyncManager : NSObject {
                             }
                     case WSMessageType.timestampUpdate:
                         
-                            let timestampUpdateInfo = try! JSONDecoder().decode(WSTimestampUpdate.self, from: wsMessage.data)
+                        let timestampUpdateInfo = try! JSONDecoder().decode(WSTimestampUpdate.self, from: wsMessage.data.data(using: .utf8) ?? Data())
                         if let delegate = self.delegate {
                             delegate.onTimestampUpdate(timestampUpdateInfo.timestamp, wsMessage)
                         }
@@ -97,28 +97,28 @@ public class SharedQSyncManager : NSObject {
     public func pauseSong() async throws {
         if let socket = socket {
             
-            let jsonData = try JSONEncoder().encode(WSMessage(type: .pause, data: "hi!!!".data(using: .utf8)!, sentAt: Date()))
+            let jsonData = try JSONEncoder().encode(WSMessage(type: .pause, data: "", sentAt: Date()))
                 try await socket.send(.data(jsonData))
         }
     }
     /// Sends a `playSong` message to the server
     public func playSong() async throws {
         if let socket = socket {
-            let jsonData = try JSONEncoder().encode(WSMessage(type: .play, data: "hi!!!".data(using: .utf8)!, sentAt: Date()))
+            let jsonData = try JSONEncoder().encode(WSMessage(type: .play, data: "", sentAt: Date()))
             try await socket.send(.data(jsonData))
         }
     }
     /// Sends a `nextSong` message to the server
     public func nextSong() async throws {
         if let socket = socket {
-            let jsonData = try JSONEncoder().encode(WSMessage(type: .nextSong, data: "hi!!!".data(using: .utf8)!, sentAt: Date()))
+            let jsonData = try JSONEncoder().encode(WSMessage(type: .nextSong, data: "", sentAt: Date()))
                 try await socket.send(.data(jsonData))
         }
     }
     /// Adds the SQSong to the queue
     public func addToQueue(song: SQSong, user: SQUser) async throws {
         if let socket = socket {
-            let jsonData = try JSONEncoder().encode(WSMessage(type: .addToQueue, data: try! JSONEncoder().encode(SQQueueItem(song: song, addedBy: user.username)), sentAt: Date()))
+            let jsonData = try JSONEncoder().encode(WSMessage(type: .addToQueue, data: String(data: try! JSONEncoder().encode(SQQueueItem(song: song, addedBy: user.username)), encoding: .utf8) ?? "", sentAt: Date()))
                 try await socket.send(.data(jsonData))
         }
     }
@@ -129,7 +129,7 @@ public class SharedQSyncManager : NSObject {
     }
     
     public func playbackStarted() async throws {
-        try await socket?.send(.data(try! JSONEncoder().encode(WSMessage(type: .playbackStarted, data: try JSONEncoder().encode(WSPlaybackStartedMessage(startedAt: Date())), sentAt: Date()))))
+        try await socket?.send(.data(try! JSONEncoder().encode(WSMessage(type: .playbackStarted, data: String(data: try JSONEncoder().encode(WSPlaybackStartedMessage(startedAt: Date())), encoding: .utf8) ?? "", sentAt: Date()))))
     }
 }
 
