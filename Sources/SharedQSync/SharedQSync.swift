@@ -22,7 +22,7 @@ public class SharedQSyncManager : NSObject {
             if delegate == nil {
                 logger.warning("[SharedQSync] [WARNING] No delegate has been provided for this instance of SharedQSyncManager. You will not recieve any messages from the server.")
             }
-            let tokenURL = URL(string: "\(serverURL.absoluteString)/groups/getws")!
+            let tokenURL = URL(string: "\(serverURL.absoluteString)/groups/getws/\(group.id)")!
             var request = URLRequest(url: tokenURL)
             request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             request.httpMethod = "GET"
