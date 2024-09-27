@@ -17,24 +17,35 @@ public class SharedQSyncManager : NSObject {
         self.websocketURL = websocketURL
     }
     /// Creates a WebSocket session with the server (uses websocketURL from `init`)
-    public func connectToGroup(group: SQGroup, token: String) {
-        if delegate == nil {
-            logger.warning("[SharedQSync] [WARNING] No delegate has been provided for this instance of SharedQSyncManager. You will not recieve any messages from the server.")
+    public func connectToGroup(group: SQGroup, token: String) async {
+        do {
+            if delegate == nil {
+                logger.warning("[SharedQSync] [WARNING] No delegate has been provided for this instance of SharedQSyncManager. You will not recieve any messages from the server.")
+            }
+            let tokenURL = URL(string: "\(serverURL.absoluteString)/groups/getws")!
+            var request = URLRequest(url: tokenURL)
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "GET"
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let wsToken = String(data: data, encoding: .utf8)
+            let socketURL = URL(string: "\(websocketURL.absoluteString)/groups/connect/\(wsToken)")!
+    //        let socketURL = websocketURL.appending(path: "/groups/group/\(group.id)/\(token)")
+            
+            let session = URLSession(configuration: .ephemeral)
+            
+            self.socket = session.webSocketTask(with: socketURL)
+            
+            socket?.delegate = self
+            socket!.resume()
+            listenForMessage()
+            if let delegate = self.delegate {
+                delegate.onGroupConnect(group)
+            }
+        } catch {
+            logger.error("There was an error connecting to the group: \(error.localizedDescription)")
+            return
         }
-        let socketURL = URL(string: "\(websocketURL.absoluteString)/groups/group/\(group.id)/\(token)")!
-//        let socketURL = websocketURL.appending(path: "/groups/group/\(group.id)/\(token)")
-        
-        let session = URLSession(configuration: .ephemeral)
-        
-        self.socket = session.webSocketTask(with: socketURL)
-        
-        socket?.delegate = self
-        socket!.resume()
-        listenForMessage()
-        if let delegate = self.delegate {
-            delegate.onGroupConnect(group)
-        }
-        
+         
     }
     
     private func listenForMessage() {
